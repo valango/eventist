@@ -2,7 +2,7 @@
 
 [![GitHub version](https://badge.fury.io/gh/villu357%2Feventist.svg)](http://badge.fury.io/gh/villu357%2Feventist)
 [![Build Status](https://travis-ci.org/villu357/eventist.svg?branch=master)](https://travis-ci.org/villu357/eventist)
-[![Coverage Status](https://coveralls.io/repos/villu357/eventist/badge.svg)](https://coveralls.io/r/villu357/eventist)
+[![Coverage Status](https://coveralls.io/repos/villu357/eventist/badge.svg?branch=master&service=github)](https://coveralls.io/github/villu357/eventist?branch=master)
 
 Event emitter for modular designs.
 
