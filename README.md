@@ -10,7 +10,7 @@ Event emitter for modular designs.
 
 ## Design goals
 * to make it easy to expand functionality;
-* to support application profiling and testing - on both front- and back-end;
+* to support application profiling and testing on both front- and back-end;
 * to implement all this with minimum amount of code.
 
 ## API
