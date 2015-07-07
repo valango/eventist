@@ -1,0 +1,8 @@
+language: node_js
+node_js:
+  - 0.10.33
+  - 0.12.5
+script: 
+  - "npm run-script test"
+after_script: 
+  - "test -e ./reports/coverage/lcov.info && npm install coveralls@2.11.2 && cat ./reports/coverage/lcov.info | coveralls"

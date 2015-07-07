@@ -1,0 +1,45 @@
+# OS genereated files
+.DS_Dtore
+.DS_Dtore?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+*.log
+
+# Packages #
+# it's better to unpack these files and commit the raw source
+# git has its own built in compression methods
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# IDE files
+nbproject
+.~lock.*
+.buildpath
+.idea
+.project
+.settings
+composer.lock
+*.bak
+tmp*.*
+
+# Project standard non-persistent directories
+node_modules/
+bower_components/
+vendor/
+vendors/
+dist*/
+reports/
+tmp*/
+
+# Project specifics
+lib/eventist.min.js
+examples/node/node_modules/
