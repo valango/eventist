@@ -6,9 +6,10 @@
   "engines": {
     "node": ">= 0.10.33"
   },
+  "repository": "valango/eventist",
   "scripts": {
     "test": "./node_modules/.bin/karma start --single-run --browsers PhantomJS",
-    "examp": "examples/initialize"
+    "postinstall": "examples/initialize"
   },
   "keywords": [
     "event",
@@ -26,7 +27,6 @@
       "url": "http://opensource.org/licenses/MIT"
     }
   ],
-  "postinstall": "examples/initialize",
   "devDependencies": {
     "gulp": "^3.9.0",
     "gulp-ignore": "^1.2.1",
