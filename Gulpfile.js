@@ -2,60 +2,35 @@
  * Gulpfile.js
  *
  * @author Villem Alango <villem.alango@gmail.com>
- * @created 26.06.15 23:44
  */
 
 /* jshint node: true */
 
 'use strict';
 
-//  Directories we want to process ... jshint or otherwise
-var SOURCES = ['.'];
-//  Stuff we don't want to touch
-var IGNORE = ['**/*.min.js', 'node_modules', 'reports',
-  'examples/node/node_modules'];
 //  jshint options file name
-var HINTRC = '.jshintrc';
-
-var gulp    = require('gulp')
-  , GJC     = require('gulp-jsx-coverage')
-  , path    = require('path')
-  , ignorer = require('gulp-ignore')
-  , jshint  = require('gulp-jshint')
-  , jasmine = require('gulp-jasmine')
-  , stylish = require('jshint-stylish')
-  , rename  = require('gulp-rename')
-  , uglify  = require('gulp-uglify')
-    /* globals console: false  */
-  , debug   = console.log.bind(console, '#')
+var HINTRC  = '.jshintrc'
+  , JSFILES = '**/*.js'
   ;
-var sep        = path.sep
-  , basePath   = __dirname
-  , allJs      = ['**', '*.js'].join(sep)
+/* globals console: false  */
+var debug = console.log.bind(console, '#');
+
+var gulp = require('gulp')
+  , path = require('path')
+  ;
+var basePath   = __dirname
   , ruleLength = HINTRC.length
-  , sources, rules, excludes
+  , exclusions = ['!**/*.min.js', '!node_modules/**/*.js', '!reports/**/*.js',
+      '!examples/node/node_modules/**/*.js']
+  , testsDir   = basePath + '/tests/lib/'
+  , srcDir     = basePath + '/lib/'
   ;
 
-/**
- * Create an array of absolute paths combined with filename
- * @param {Array<string>} directories
- * @param {string} filename
- * @returns {Array<string>}
- */
-var compose = function (directories, filename) {
-  return directories.map(function (p) {
-    var r = [basePath, p];
-
-    /\.js$/.test(p) || r.push(filename);
-    r = path.normalize(r.join(sep));
-    return r;
-  });
+var only = function (p) {
+  var def = exclusions.slice();
+  def.unshift(p);
+  return def;
 };
-
-//  Initialize the paths
-sources = compose(SOURCES, allJs);
-rules = compose(SOURCES, '**' + sep + HINTRC);
-excludes = compose(IGNORE, allJs);
 
 // JSHINT
 // @link(https://www.npmjs.com/package/gulp-jshint)
@@ -65,11 +40,36 @@ excludes = compose(IGNORE, allJs);
 // climb upwards.
 
 function hinter(fspec, opt_options) {
+  var jshint  = require('gulp-jshint')
+    , stylish = require('jshint-stylish')
+    ;
   return gulp.src(fspec)
-    .pipe(ignorer.exclude(excludes))
     .pipe(jshint(opt_options))
     .pipe(jshint.reporter(stylish));
 }
+
+var tester = function (spec) {
+  var GJC            = require('gulp-jsx-coverage')
+    , jasmine        = require('gulp-jasmine')
+    , GJCoptions     = {
+        istanbul: {
+          coverageVariable: '__MY_TEST_COVERAGE__', // skiping this result in exception
+          includeUntested:  true,
+          exclude:          /node_modules|tests/
+        },
+        coverage: {
+          reporters: ['lcov'],
+          directory: 'reports/coverage/node'
+        }
+      }
+    , jasmineOptions = {verbose: true}
+    ;
+  GJC.initIstanbulHook(GJCoptions);
+
+  return gulp.src(spec)
+    .pipe(jasmine(jasmineOptions))
+    .on('end', GJC.colloectIstanbulCoverage(GJCoptions));
+};
 
 // ==================  Tasks  ===================
 
@@ -78,11 +78,16 @@ function hinter(fspec, opt_options) {
  NB: this does not detect new file creation!
  */
 gulp.task('watch', function () {
-  //debug('=== watch ===');
-  gulp.watch(sources, function (ev) {
+  gulp.watch(only('**/*.js'), function (ev) {
+    var p0, p;
     if (ev.type !== 'deleted') {
-      debug('watch:', ev.path);
-      hinter(ev.path);
+      if ((p0 = ev.path ).indexOf(srcDir) === 0) {
+        p = testsDir + path.basename(p0, '.js') + 'Spec.js';
+      } else if (p0.indexOf(testsDir) === 0) {
+        p = p0;
+      }
+      p && tester(p);
+      hinter(p0);
     }
   });
 });
@@ -91,12 +96,11 @@ gulp.task('watch', function () {
  When .jshintrc file is changed, run jshint for affected directories.
  */
 gulp.task('hint-watch', function () {
-  //debug('=== hint-watch ===');
-  gulp.watch(rules, function (ev) {
+  gulp.watch('**/.jshintrc', function (ev) {
     var p = ev.path;
-    p = p.substr(0, p.length - ruleLength) + allJs;
+    p = p.substr(0, p.length - ruleLength) + JSFILES;
     debug('hwatch:', p);
-    hinter(p);
+    hinter(only(p));
   });
 });
 
@@ -104,32 +108,19 @@ gulp.task('hint-watch', function () {
  Run-once jshint task.
  */
 gulp.task('hint', function () {
-  hinter(sources);
+  hinter(only('**/*.js'));
 });
 
 gulp.task('test', function () {
-  var GJCoptions = {
-    istanbul: {
-      coverageVariable: '__MY_TEST_COVERAGE__', // skipping this result in exception
-      includeUntested:  true,
-      exclude:          /node_modules|tests/
-    },
-    coverage: {
-      reporters: ['lcov'],
-      directory: 'reports/coverage/node'
-    }
-  };
-  var jasmineOptions = {verbose: true};
-  GJC.initIstanbulHook(GJCoptions); // Refer to previous gulp-jsx-coverage options
-
-  return gulp.src('tests/**/*Spec.js')
-    .pipe(jasmine(jasmineOptions))
-    .on('end', GJC.colloectIstanbulCoverage(GJCoptions));
+  return tester('tests/**/*Spec.js');
 });
 
 gulp.task('compress', function () {
   // @link(https://github.com/sindresorhus/gulp-jasmine)
   // options: verbose:false, includeStackTrace:false, reporter: obj/array
+  var rename = require('gulp-rename')
+    , uglify = require('gulp-uglify')
+    ;
   return gulp.src('./lib/eventist.js')
     .pipe(uglify({preserveComments: 'some'}))
     .pipe(rename('eventist.min.js'))
@@ -137,4 +128,4 @@ gulp.task('compress', function () {
 });
 
 // Define the default task as a sequence of the above tasks
-gulp.task('default', ['hint', 'watch', 'hint-watch']);
+gulp.task('default', ['test', 'hint', 'watch', 'hint-watch']);

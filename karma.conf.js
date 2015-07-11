@@ -1,7 +1,10 @@
-// Karma configuration
-// @link(https://github.com/karma-runner/karma-coverage)
-// NB: This file is modified for custom command line options support!
-// Author: Villem Alango
+/**
+ * karma.conf.js
+ *
+ * NB: This file is modified for configuration override!
+ *
+ * @author Villem Alango <villem.alango@gmail.com>
+ */
 
 /* jshint node: true */
 module.exports = function (config) {

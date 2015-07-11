@@ -24,7 +24,6 @@
   "license": "MIT",
   "devDependencies": {
     "gulp": "^3.9.0",
-    "gulp-ignore": "^1.2.1",
     "gulp-jasmine": "^2.0.1",
     "gulp-jshint": "^1.11.2",
     "gulp-jsx-coverage": "^0.1.3",

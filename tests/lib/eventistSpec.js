@@ -1,6 +1,9 @@
-/*
- These tests should run under different environments.
- Author: Villem Alango
+/**
+ * eventistSpec.js
+ *
+ * These tests run under different environments.
+ *
+ * @author Villem Alango <villem.alango@gmail.com>
  */
 
 (function (global) {
@@ -28,11 +31,12 @@
   } else if ('object' === typeof module && module.exports) {
     env = 'NODE';
     initialize = function () {
-      testTarget = require('../../lib/eventist.js');
+      testTarget = require('../../' + TARGET);
     };
   } else {
     env = 'WIN';
-    initialize = function(){};
+    initialize = function () {
+    };
     testTarget = global.Eventist;
   }
   //console.log('**** ENV:', env);
@@ -208,14 +212,19 @@
 
   function testSend() {
 
-    it('should invoke handler', function (done) {
+    it('callback even if there was no handlers', function (done) {
 
-      em.once(EV1, function () {
+      em.send(function (err, res, args) {
+        expect(err).toBe(null);
+        expect(res).toBe(void 0);
+        expect(args.length).toBe(2);
+        expect(args[0]).toBe(EV1);
+        expect(args[1]).toBe(12);
         done();
-      }).send(EV1);
+      }, EV1, 12);
     });
 
-    it('callback should get async context', function (done) {
+    it('callback should get return value', function (done) {
 
       em.once(EV1, function () {
         return 22;
@@ -301,7 +310,7 @@
   }
 
   function testReturn() {
-    it('should work with duplicated listeners', function () {
+    it('should return non-undefined value immediately', function () {
       em.on(EV1, listener)      // normal listener
         .on(EV1, listener)      // normal listener
         .on(EV1, function () {  // special one returning non-undefined
