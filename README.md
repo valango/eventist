@@ -5,16 +5,12 @@
 
 Event emitter for modular designs.
 
-***NOTE:*** *This project is anything but finished yet*.
-
 ## Design goals
 * minimalistic easily extendable API;
 * support for application profiling and testing on both front- and back-end;
 * implement all this with minimum amount of code.
 
 ## Using
-Install the package via npm or bower.
-
 Take a look at and play with [code samples](examples/README.md).
 
 ## API
