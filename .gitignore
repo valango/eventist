@@ -41,5 +41,4 @@ reports/
 tmp*/
 
 # Project specifics
-lib/eventist.min.js
 examples/node/node_modules/

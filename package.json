@@ -1,6 +1,6 @@
 {
   "name": "eventist",
-  "version": "1.0.1",
+  "version": "0.2.1",
   "description": "Flexible event emitter for modular designs.",
   "main": "./lib/eventist.js",
   "engines": {
@@ -22,12 +22,6 @@
     "email": "villem.alango@gmail.com"
   },
   "license": "MIT",
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "http://opensource.org/licenses/MIT"
-    }
-  ],
   "devDependencies": {
     "gulp": "^3.9.0",
     "gulp-ignore": "^1.2.1",
