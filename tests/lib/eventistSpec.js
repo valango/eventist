@@ -1,5 +1,6 @@
 /*
  These tests should run under different environments.
+ Author: Villem Alango
  */
 
 (function (global) {
@@ -31,9 +32,10 @@
     };
   } else {
     env = 'WIN';
-    // Target should be a global variable here.
+    initialize = function(){};
+    testTarget = global.Eventist;
   }
-  console.log('**** ENV:', env);
+  //console.log('**** ENV:', env);
 
 
   /*

@@ -116,7 +116,7 @@ gulp.task('test', function () {
     },
     coverage: {
       reporters: ['lcov'],
-      directory: 'reports/coverage-node'
+      directory: 'reports/coverage/node'
     }
   };
   var jasmineOptions = {verbose: true};

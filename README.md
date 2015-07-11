@@ -146,6 +146,14 @@ has been processed.
 If we do not need result processing or we do not need to wait until our response
 gets processed, then the *"If necessary..."* lines can be omitted.
 
+## Tests
+The same tests can be run for different environments using the following commands:
+```
+  > gulp test              # --> reports/coverage/node/
+  > karma start            # --> reports/coverage/browser-amd/
+  > karma start --direct   # --> reports/coverage/browser/
+```
+
 ## Links
 
 * [Olical/EventEmitter](https://github.com/Olical/EventEmitter) - similar,

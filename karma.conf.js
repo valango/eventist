@@ -1,13 +1,14 @@
 // Karma configuration
-// Generated on Wed Apr 29 2015 21:24:37 GMT+0300 (EEST)
 // @link(https://github.com/karma-runner/karma-coverage)
+// NB: This file is modified for custom command line options support!
+// Author: Villem Alango
 
 /* jshint node: true */
 module.exports = function (config) {
 
   'use strict';
 
-  config.set({
+  var options = {   // By default, Karma uses requirejs
 
     // base path that will be used to resolve all patterns (eg. files, exclude)
     basePath: '',
@@ -39,7 +40,7 @@ module.exports = function (config) {
       /*instrumenterOptions: {
        istanbul: { noCompact: true }
        },*/
-      dir:       'reports/coverage-browser',
+      dir:       'reports/coverage/browser-amd',
       reporters: [
         // Empty subdir forces each browser to create it's own.
         {type: 'html', subdir: ''},
@@ -73,5 +74,37 @@ module.exports = function (config) {
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
     singleRun: false
-  });
+  };
+
+  var directOptions       =
+      {
+        frameworks:       ['jasmine'],
+        files:            [
+          'lib/eventist.js',
+          'tests/lib/*.js'
+        ],
+        coverageReporter: {
+          dir:       'reports/coverage/browser',
+          reporters: [
+            // Empty subdir forces each browser to create it's own.
+            {type: 'html', subdir: ''},
+            {type: 'lcov', subdir: '.'}
+          ]
+        }
+      }
+    , key, override, args = process.argv, i = args.length;
+
+  while (--i > 2 && !override) {
+    if (args[i] === '--direct') {
+      override = directOptions;
+    }
+  }
+
+  if (override) {
+    /* jshint forin: false */
+    for (key in override) {
+      options[key] = override[key];
+    }
+  }
+  config.set(options);
 };
