@@ -1,4 +1,3 @@
-
 // Karma configuration
 // Generated on Wed Apr 29 2015 21:24:37 GMT+0300 (EEST)
 // @link(https://github.com/karma-runner/karma-coverage)
@@ -21,8 +20,7 @@ module.exports = function (config) {
     ],
 
     // list of files to exclude
-    exclude: [
-    ],
+    exclude: [],
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
@@ -39,12 +37,13 @@ module.exports = function (config) {
 
     coverageReporter: {
       /*instrumenterOptions: {
-        istanbul: { noCompact: true }
-      },*/
-      dir: 'reports/coverage',
+       istanbul: { noCompact: true }
+       },*/
+      dir:       'reports/coverage-browser',
       reporters: [
-        { type: 'html', subdir: '' },
-        { type: 'lcov', subdir: '.' }
+        // Empty subdir forces each browser to create it's own.
+        {type: 'html', subdir: ''},
+        {type: 'lcov', subdir: '.'}
       ]
     },
 
