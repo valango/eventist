@@ -17,17 +17,17 @@ var IGNORE = ['**/*.min.js', 'node_modules', 'reports',
 //  jshint options file name
 var HINTRC = '.jshintrc';
 
-var gulp     = require('gulp')
-  , GJC      = require('gulp-jsx-coverage')
-  , path     = require('path')
-  , ignorer  = require('gulp-ignore')
-  , jshint   = require('gulp-jshint')
-  , jasmine  = require('gulp-jasmine')
-  , stylish  = require('jshint-stylish')
-  , rename   = require('gulp-rename')
-  , uglify   = require('gulp-uglify')
+var gulp    = require('gulp')
+  , GJC     = require('gulp-jsx-coverage')
+  , path    = require('path')
+  , ignorer = require('gulp-ignore')
+  , jshint  = require('gulp-jshint')
+  , jasmine = require('gulp-jasmine')
+  , stylish = require('jshint-stylish')
+  , rename  = require('gulp-rename')
+  , uglify  = require('gulp-uglify')
     /* globals console: false  */
-  , debug    = console.log.bind(console, '#')
+  , debug   = console.log.bind(console, '#')
   ;
 var sep        = path.sep
   , basePath   = __dirname
@@ -131,7 +131,7 @@ gulp.task('compress', function () {
   // @link(https://github.com/sindresorhus/gulp-jasmine)
   // options: verbose:false, includeStackTrace:false, reporter: obj/array
   return gulp.src('./lib/eventist.js')
-    .pipe(uglify(/*{preserveComments:'some'}*/))
+    .pipe(uglify({preserveComments: 'some'}))
     .pipe(rename('eventist.min.js'))
     .pipe(gulp.dest('./lib'));
 });

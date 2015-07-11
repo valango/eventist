@@ -1,6 +1,6 @@
 {
   "name": "eventist",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Flexible event emitter for modular designs.",
   "main": "./lib/eventist.js",
   "engines": {
