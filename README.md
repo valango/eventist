@@ -22,7 +22,7 @@ the same value immediately, perhaps leaving some handlers untouched.
 
 Setting or removing handlers during the emit loop has no effect
 on handling the current event.
-Handlers will be invoked in their registration order.
+Handlers will be invoked starting from the most recently registered one.
 
 * ***event*** string.
 * ***arguments*** are optional and can be of any type.

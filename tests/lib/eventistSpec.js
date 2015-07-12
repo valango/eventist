@@ -315,15 +315,15 @@
 
   function testReturn() {
     it('should return non-undefined value immediately', function () {
-      em.on(EV1, listener)      // normal listener
-        .on(EV1, listener)      // normal listener
+      em.on(EV1, listener)      // normal listener (should not fire)
+        .on(EV1, listener)      // normal listener(should not fire)
         .on(EV1, function () {  // special one returning non-undefined
           count += 1;
           return null;
         })
-        .on(EV1, listener);     // normal listener (should never fire)
+        .on(EV1, listener);     // normal listener (should fire)
       expect(emit(EV1)).toBe(null);
-      expect(count).toBe(3);
+      expect(count).toBe(2);
     });
   }
 }(this));
