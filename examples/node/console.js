@@ -1,5 +1,7 @@
 /**
  * Console app does nothing clever. Most of code below is actually suicidal.
+ *
+ * @author Villem Alango <villem.alango@gmail.com>
  */
 
 'use strict';
@@ -7,12 +9,9 @@
 var bus = require('eventist')();
 var emit = bus.emit;
 
-var log = console.log.bind(console);
-
 bus.emit = function () {
-  var res = emit.apply(bus, arguments);
-  log('EVENT:', Array.prototype.join.call(arguments, '::'), '-->', typeof res);
-  return res;
+  emit.apply(bus, ['ui', 'log', Array.prototype.join.call(arguments, '::')]);
+  return emit.apply(bus, arguments);
 };
 
 bus
@@ -38,7 +37,7 @@ bus
   })
   .on('app', function (cmd) {
     if (cmd === 'close') {
-      log('Have a great day!');
+      bus.send('ui', 'say', 'Have a great day!');
       process.exit(0);
     }
   })
@@ -48,3 +47,5 @@ bus
 
 require('./ui-simple')(bus);
 require('./decoder')(bus);
+// Now we are good to go...
+bus.send('ui', 'prompt');

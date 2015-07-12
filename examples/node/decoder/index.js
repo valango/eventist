@@ -1,5 +1,7 @@
 /**
  * Decoder translates user input into some sort of application actions.
+ *
+ * @author Villem Alango <villem.alango@gmail.com>
  */
 
 'use strict';
@@ -7,9 +9,13 @@
 var bus;
 var tolerance = 1;
 
-var logics = function(command){
+var logics = function (command) {
 
-  switch(command) {
+  switch (command) {
+    case 'help':
+      bus.send('ui', 'say',
+        'Available commands: clear help hello exit quit');
+      break;
     case 'clear':
       bus.send('ui', 'clear');
       break;
@@ -21,10 +27,12 @@ var logics = function(command){
       bus.send('app', 'close');
       break;
     default:
-      if(tolerance){
-        console.log('I do not understand...', tolerance, 'try left.');
+      if (tolerance) {
+        bus.send('ui', 'say',
+          ['I do not understand! Type "help" if you mind...', tolerance, 'try left.'].join(' '));
         --tolerance;
-      }else{
+        bus.send('ui', 'prompt');
+      } else {
         bus.off('user', logics);
         bus.send('module.quit', 'decoder');
         bus = void 0;
@@ -32,10 +40,11 @@ var logics = function(command){
       return;
   }
   tolerance = 1;
+  bus.send('ui', 'prompt');
   return true;
 };
 
-var init = function(busInstance){
+var init = function (busInstance) {
 
   bus = busInstance;
 
