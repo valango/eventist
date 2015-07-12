@@ -42,6 +42,10 @@ var logics = function (cmd, a1) {
       console.log(B + 'LOG: ' + a1 + R);
       break;
 
+    case 'set.prompt':
+      setPrompt(a1);
+      break;
+
     case 'prompt':
       rl.prompt();
       break;

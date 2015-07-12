@@ -41,6 +41,7 @@ If callback is not supplied then exception from processing will not be caught.
 * ***callback*** is `function(Error=, string, ...)` .
 * ***event*** string.
 * ***arguments*** are optional and can be of any type.
+* ***Returns:*** object instance for chaining.
 
 ### on ( event, handler )
 Register a handler function for event. No checks for duplicates.

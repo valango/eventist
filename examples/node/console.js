@@ -8,9 +8,10 @@
 
 var bus = require('eventist')();
 var emit = bus.emit;
+var logging = true;
 
 bus.emit = function () {
-  emit.apply(bus, ['ui', 'log', Array.prototype.join.call(arguments, '::')]);
+  logging && emit.apply(bus, ['ui', 'log', Array.prototype.join.call(arguments, '::')]);
   return emit.apply(bus, arguments);
 };
 
@@ -35,11 +36,20 @@ bus
         };
     die();
   })
-  .on('app', function (cmd) {
+  .on('app', function (cmd, a) {
     if (cmd === 'close') {
       bus.send('ui', 'say', 'Have a great day!');
       process.exit(0);
+    } else if (cmd === 'load.filter') {
+      bus.send('ui', 'say', 'loading sfaety filter...');
+      require('./filter')(bus);
+      bus.send('ui', 'prompt');
+    }else if(cmd === 'log'){
+      logging = !!a;
+    } else {
+      return void 0;
     }
+    return true;
   })
 ;
 

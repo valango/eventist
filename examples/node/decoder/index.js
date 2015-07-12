@@ -9,18 +9,28 @@
 var bus;
 var tolerance = 1;
 
-var logics = function (command) {
+var logics = function (command, a) {
 
   switch (command) {
     case 'help':
       bus.send('ui', 'say',
-        'Available commands: clear help hello exit quit');
+        'Available commands: clear, filter, help, log on, log off, hello, exit, quit');
       break;
     case 'clear':
       bus.send('ui', 'clear');
       break;
+    case 'filter':
+      bus.send('app', 'load.filter');
+      return true;
     case 'hello':
       bus.send('ui', 'say', 'world!');
+      break;
+    case 'log':
+    case 'log on':
+      bus.send('app', 'log', 1);
+      break;
+    case 'log off':
+      bus.send('app', 'log', 0);
       break;
     case 'exit':
     case 'quit':
