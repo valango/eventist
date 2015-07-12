@@ -71,7 +71,7 @@
 // Test descriptions.
 // ****************************************************
 
-  describe('TESTS', function () {
+  describe('Eventist', function () {
 
     beforeAll(initialize);
 
@@ -146,25 +146,25 @@
       function () {
         expect(function () {
           em.on(this, listener);
-        }).toThrowError(TypeError);
+        }).toThrowError(TypeError, /Eventist#on: /);
       });
     it('once() should throw TypeError when event type not string',
       function () {
         expect(function () {
           em.once(this, listener);
-        }).toThrowError(TypeError);
+        }).toThrowError(TypeError, /Eventist#once: /);
       });
     it('on() should throw TypeError when listener is not a function',
       function () {
         expect(function () {
           em.on(EV1, this);
-        }).toThrowError(TypeError);
+        }).toThrowError(TypeError, /Eventist#on: /);
       });
     it('once() should throw TypeError when listener is not a function',
       function () {
         expect(function () {
           em.once(EV1);
-        }).toThrowError(TypeError);
+        }).toThrowError(TypeError, /Eventist#once: /);
       });
   }
 
@@ -253,9 +253,13 @@
     it('no callback should leak exception', function (done) {
       // Catch what you can't... ;-)
       if (env === 'NODE') {
-        process.on('uncaughtException', function (e) {
-          expect(e.split(' ').pop()).toBe('intended');
-          done();
+        process.once('uncaughtException', function (e) {
+          //console.log('CATCH-G:', e);
+          if ('string' === typeof e) {
+            expect(e.split(' ').pop()).toBe('intended');
+            //process.on('uncaughtException', void 0);
+            done();
+          }
         });
       } else {
         global.onerror = function (e) {
