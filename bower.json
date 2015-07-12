@@ -28,7 +28,6 @@
   "[Gk]*.js",
   "*.yml",
   "package.json",
-  "examples",
   "tests"
   ]
 }

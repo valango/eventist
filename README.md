@@ -16,9 +16,14 @@ Event emitter for modular designs.
 ```
  > npm install eventist
 ```
+or
+```
+ > bower install eventist
+```
 
 ## Usage
-Take a look at and play with [code samples](examples/README.md).
+Take a look at and play with [code samples](examples/README.md) and
+*Special Patterns* below.
 
 ## API
 
@@ -96,7 +101,7 @@ debugging/profiling purposes. This method should not be called directly.
 * ***event*** as supplied to *emit()*.
 * ***Returns:*** anything from *handler*.
 
-## Usage Patterns
+## Special Patterns
 
 ### Find out the handler giving specific response to certain event
 
