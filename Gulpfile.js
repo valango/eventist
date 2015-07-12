@@ -11,6 +11,7 @@
 //  jshint options file name
 var HINTRC  = '.jshintrc'
   , JSFILES = '**/*.js'
+  , RED     = '\u001B[31m'  // ANSI escape code
   ;
 /* globals console: false  */
 var debug = console.log.bind(console, '#');
@@ -62,13 +63,34 @@ var tester = function (spec) {
           directory: 'reports/coverage/node'
         }
       }
-    , jasmineOptions = {verbose: true}
+    , jasmineOptions = {verbose: true, includeStackTrace: true}
     ;
   GJC.initIstanbulHook(GJCoptions);
 
   return gulp.src(spec)
     .pipe(jasmine(jasmineOptions))
     .on('end', GJC.colloectIstanbulCoverage(GJCoptions));
+};
+
+var watcher = function (hint, test) {
+  gulp.watch(only(JSFILES), function (ev) {
+    var p0, p;
+    if (ev.type !== 'deleted') {
+      p0 = ev.path;
+      if (test) {
+        if (p0.indexOf(srcDir) === 0) {
+          p = testsDir + path.basename(p0, '.js') + 'Spec.js';
+        } else if (p0.indexOf(testsDir) === 0) {
+          p = p0;
+        }
+        p && tester(p);
+      }
+      hint && hinter(p0);
+    }
+  });
+  // TODO solve the issue#1
+  test && debug(RED + 'NB: Use of Karma test runner is recommended, ' +
+    'see issue#1 at https://github.com/valango/eventist/ !');
 };
 
 // ==================  Tasks  ===================
@@ -78,18 +100,15 @@ var tester = function (spec) {
  NB: this does not detect new file creation!
  */
 gulp.task('watch', function () {
-  gulp.watch(only('**/*.js'), function (ev) {
-    var p0, p;
-    if (ev.type !== 'deleted') {
-      if ((p0 = ev.path ).indexOf(srcDir) === 0) {
-        p = testsDir + path.basename(p0, '.js') + 'Spec.js';
-      } else if (p0.indexOf(testsDir) === 0) {
-        p = p0;
-      }
-      p && tester(p);
-      hinter(p0);
-    }
-  });
+  watcher(true, true);
+});
+
+gulp.task('watch-hint', function () {
+  watcher(true, false);
+});
+
+gulp.task('watch-test', function () {
+  watcher(false, true);
 });
 
 /*
@@ -128,4 +147,4 @@ gulp.task('compress', function () {
 });
 
 // Define the default task as a sequence of the above tasks
-gulp.task('default', ['test', 'hint', 'watch', 'hint-watch']);
+gulp.task('default', ['test', 'hint', 'watch-hint', 'hint-watch']);
