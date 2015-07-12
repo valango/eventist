@@ -5,12 +5,19 @@
 
 Event emitter for modular designs.
 
-## Design goals
-* minimalistic easily extendable API;
+**Design goals:**
+
+* minimalistic extendable API;
 * support for application profiling and testing on both front- and back-end;
 * implement all this with minimum amount of code.
 
-## Using
+## Installation
+
+```
+ > npm install eventist
+```
+
+## Usage
 Take a look at and play with [code samples](examples/README.md).
 
 ## API
