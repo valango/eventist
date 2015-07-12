@@ -12,6 +12,7 @@
     "postinstall": "examples/initialize"
   },
   "keywords": [
+    "bus",
     "event",
     "emitter",
     "extendable",

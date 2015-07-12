@@ -9,4 +9,3 @@ application main files.
 Shows how to use event system to loosely couple application modules and
 achieve encapsulation. Each module knows only it's own domain plus *eventist*
 API.
-

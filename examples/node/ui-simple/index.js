@@ -1,6 +1,6 @@
 /**
- * Simple UI receives translates user input and performs rudimentary
- * output functions.
+ * Simple UI receives translates user input into 'user' events
+ * and performs rudimentary output functions.
  *
  * @author Villem Alango <villem.alango@gmail.com>
 */
@@ -58,18 +58,16 @@ var logics = function (cmd, a1) {
 
 var init = function (busInstance) {
 
-  bus = busInstance;
-
-  bus
+  (bus = busInstance)
     .on('ui', logics)
     .send('module.connected', name);
 
   clear();
   setPrompt('OHAI');
 
+  //  Actual input feed event listener.
   rl.on('line', function (line) {
     var input = line.trim();
-
     bus.send('user', input);
   }).on('close', function () {
     bus.off('ui', logics).emit('app', 'close');
