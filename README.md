@@ -23,7 +23,7 @@ Take a look at and play with [code samples](examples/README.md).
 ## API
 
 ### emit ( event {, arguments} )
-Call all handlers registered for event with *event*.
+Call all handlers registered for the *event*.
 If a handler returns anything else than `undefined`, *emit()* will return
 the same value immediately, perhaps leaving some handlers untouched.
 
