@@ -28,13 +28,13 @@ Take a look at and play with [code samples](examples/README.md) and
 ## API
 
 ### emit ( event {, arguments} )
-Call all handlers registered for the *event*.
-If a handler returns anything else than `undefined`, *emit()* will return
+Call the handlers registered for the *event*.
+When a handler returns anything else than `undefined`, *emit()* will return
 the same value immediately, perhaps leaving some handlers untouched.
 
+Handlers will be invoked starting from the most recently registered one.
 Setting or removing handlers during the emit loop has no effect
 on handling the current event.
-Handlers will be invoked starting from the most recently registered one.
 
 * ***event*** string.
 * ***arguments*** are optional and can be of any type.
@@ -44,16 +44,17 @@ Handlers will be invoked starting from the most recently registered one.
 Put event into queue to be sent asynchronously. If *callback* is supplied,
 then Eventist will invoke it with the following argument values:
 
-* `null` or *Error instance* if there was exception thrown;
-* *return value* from any event handler;
-* arguments array, with *event* as it's first element.
+* `null` or the exception value if one was caught;
+* *return value* return value from event processing;
+* array containing the `event` and all `arguments`.
 
-If callback is not supplied then exception from processing will not be caught.
+If callback is not supplied, then exception from processing will not be caught.
 
-* ***callback*** is `function(Error=, string, ...)` .
+* ***callback*** is `function(*,*,Array<*>)` .
 * ***event*** string.
 * ***arguments*** are optional and can be of any type.
 * ***Returns:*** object instance for chaining.
+* ***Throws:*** any exception from event processing if `callback` is missing.
 
 ### on ( event, handler )
 Register a handler function for event. No checks for duplicates.
@@ -68,7 +69,7 @@ to *emit()*. See return value handling above.
 Same as *on()*, but the handler will be removed right after it gets called.
 
 ### off ( event, handler )
-Remove previously registered handler(s) for event, if found.
+Remove previously registered handler for the `event`, if found.
 If duplicate registrations were made, only the last one will be undone.
 `TypeError` exception will be thrown if *event* is not a string. 
 
