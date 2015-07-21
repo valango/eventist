@@ -25,7 +25,7 @@ or
 Take a look at and play with [code samples](examples/README.md) and
 *Special Patterns* below.
 
-## API
+## Main API
 
 ### emit ( event {, arguments} )
 Call the handlers registered for the *event*.
@@ -78,6 +78,11 @@ If duplicate registrations were made, only the last one will be undone.
 ***or*** `true` to remove all handlers for given event.
 * ***Returns:*** object instance for chaining.
 * ***Throws:***  `TypeError` if *event* is not a string.
+
+## Debugging API
+
+The following methods are intended for debugging and production code should not
+use those. This API or parts of it may be deprecated soon.
 
 ### depth ()
 Return recursion depth of current event. Value 0 means that *emit()* is not
