@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "Initializing ./examples dubdirectory ..." 
+echo "Initializing ./examples directory ..."
 
 if [ ! -d examples/node/node_modules ]; then
   mkdir examples/node/node_modules
