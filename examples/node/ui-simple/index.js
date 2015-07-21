@@ -3,7 +3,7 @@
  * and performs rudimentary output functions.
  *
  * @author Villem Alango <villem.alango@gmail.com>
-*/
+ */
 
 'use strict';
 
@@ -11,6 +11,16 @@ var B = '\u001B[34m'; // blue
 var G = '\u001B[32m'; // green
 var M = '\u001B[35m'; // magenta
 var R = '\u001B[39m'; // reset
+var helloText = [
+  'Hey, I am a simple terminal-style interpreter demo.',
+  'You type something in and I shall do something... not dangerous.',
+  'Meaning of the colors:',
+  G + '    - your input;',
+  B + '    - internal events log;',
+  M + '    - my responses.',
+  R + 'Good luck!',
+  ''];
+
 var name     = 'ui-simple'
   , bus
   , prompt   = 'OHAI'
@@ -64,6 +74,7 @@ var init = function (busInstance) {
 
   clear();
   setPrompt('OHAI');
+  console.log(helloText.join('\n'));
 
   //  Actual input feed event listener.
   rl.on('line', function (line) {

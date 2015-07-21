@@ -17,7 +17,7 @@ var decode;
  *
  * @param {string} command
  */
-var lastTry = function(command){
+var lastTry = function (command) {
 
   var res = !retry && bus.emit('app', 'bad-user', command);
 
@@ -26,7 +26,7 @@ var lastTry = function(command){
   } else if (tolerance) {
     bus.send('ui', 'say',
       ['I do not understand! Type "help", if you mind...',
-        tolerance, 'try left.'].join(' '));
+        tolerance, 'try is left.'].join(' '));
     --tolerance;
     bus.send('ui', 'prompt');
   } else {              // Module suicide - letting the whole world to know.
@@ -36,8 +36,11 @@ var lastTry = function(command){
   }
 };
 
-/* jshint maxcomplexity:10 */
+//  Handle the 'user' events and return true to indicate it's done.
+/* jshint maxcomplexity:12 */
 decode = function (command) {
+
+  command = command.trim();
 
   switch (command) {
     case 'help':
@@ -69,6 +72,9 @@ decode = function (command) {
     case 'exit':
     case 'quit':
       bus.send('app', 'close');
+      break;
+
+    case '':
       break;
 
     default:

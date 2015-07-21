@@ -9,28 +9,34 @@
 
 'use strict';
 
-    // Event bus is the only connection between functional modules.
+// Event bus is the only connection between functional modules.
 var bus = require('eventist')();
 var emit = bus.emit;
 var logging = true;
+var pendingInput = null;
 
 //  Override the original method for logging purposes.
 bus.emit = function () {
-  logging && emit.apply(bus, ['ui', 'log', Array.prototype.join.call(arguments, '::')]);
+  logging &&
+  emit.apply(bus, ['ui', 'log', Array.prototype.join.call(arguments, '::')]);
+
   return emit.apply(bus, arguments);
 };
 
 /*
-  Application logic:
-  - maintaining dynamic configuration and connections between modules;
-  - implementing some functions of existential significance.
+ Application logic:
+ - maintaining dynamic configuration and connections between modules;
+ - implementing some functions of existential significance.
  */
 bus
-  .on('module.connected', function () {
+  .on('module.connected', function (name) {
+    if (name === 'decoder') {
+      bus.send('user', pendingInput);
+    }
     return true;
   })
   .once('module.quit', function (name) {
-    // Make a dramatic farewell before finishing the seppuku.
+    // Make a dramatic farewell during committing seppuku.
     bus.send('ui', 'say',
       ['Ewwww... you have killed my', name, '!!!  :,('].join(' '));
     var left = 9
@@ -46,6 +52,14 @@ bus
           }
         };
     die();
+  })
+  //  Here we simulate the lazy loading scenario.
+  .once('user', function (input) {
+    bus.send('ui', 'say', 'Did you say "' + (pendingInput = input) + '"?');
+    bus.send('ui', 'say', 'Just a second - the interpreter is being loaded...');
+    setTimeout(function () {
+      require('./decoder')(bus);
+    }, 1000);
   })
   //  Some application-level events are handled here.
   .on('app', function (cmd, a) {
@@ -71,9 +85,7 @@ bus
     return true;
   });
 
-// Here we load functional modules
-
+// Load functional modules
 require('./ui-simple')(bus);
-require('./decoder')(bus);
 // And now we are good to go...
 bus.send('ui', 'prompt');
