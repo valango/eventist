@@ -113,6 +113,7 @@
     testOnce();
     testOff();
     testSend();
+    testHook();
     testDepth();
     testInfo();
     testMulti();
@@ -166,6 +167,12 @@
           em.once(EV1);
         }).toThrowError(TypeError, /Eventist#once: /);
       });
+    it('hook() should throw TypeError when callback is not a function',
+      function () {
+        expect(function () {
+          em.hook('a');
+        }).toThrowError(TypeError, /Eventist#hook: callback/);
+      });
   }
 
   function testOn() {
@@ -195,6 +202,35 @@
     it('should discard unfired once handler', function () {
       em.once(EV1, listener).off(EV1, listener);
       expect(Object.keys(em.info()).length).toBe(0);
+    });
+  }
+
+  function testHook() {
+    it('should be called even without handlers', function () {
+      var was = false;
+      var h = function (args) {
+        was = args[0];
+      };
+      expect(em.hook(h)).toBe(null);
+      em.emit(EV1);
+      expect(was).toBe(EV1);
+      expect(em.hook()).toBe(h);
+      expect(em.hook(false)).toBe(null);
+    });
+    it('should be able to modify everything', function () {
+      em.on(EV1, listener).hook(function (args) {
+        if (args.length===0) {
+          args.push(EV1);
+          args.push(22);
+        }
+        event = args.join('-');
+      });
+      em.emit(EV1, 0);
+      expect(count).toBe(1);
+      expect(event).toBe('testEv1-0');
+      em.emit();
+      expect(count).toBe(2);
+      expect(event).toBe('testEv1-22');
     });
   }
 

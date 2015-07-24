@@ -84,6 +84,16 @@ If duplicate registrations were made, only the last one will be undone.
 The following methods are intended for debugging and production code should not
 use those. This API or parts of it may be deprecated soon.
 
+### hook ( [callback] )
+Set the hook callback function. Callback hook will be called by *emit()*
+before any of the handlers. Callback hook function may modify the arguments
+array in any way, before it will be applied to handlers. Calling the method
+with falsey argument will remove the hook callback.
+
+* ***callback*** function receiving array of all arguments supplied to emit();
+* ***Returns:*** previous hook callback or null;
+* ***Throws:***  `TypeError` if `callback` is not falsey and is not a function.
+
 ### depth ()
 Return recursion depth of current event. Value 0 means that *emit()* is not
 active.
