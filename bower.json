@@ -1,6 +1,6 @@
 {
   "name": "eventist",
-  "version": "0.3.3",
+  "version": "0.4.1",
   "description": "Event emitter for modular designs",
   "main": "lib/eventist.js",
   "repository": {
@@ -19,8 +19,8 @@
   ],
   "license": "MIT",
   "moduleType": [
-    "amd", 
-    "globals", 
+    "amd",
+    "globals",
     "node"
   ],
   "ignore": [
