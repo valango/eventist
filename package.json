@@ -1,6 +1,6 @@
 {
   "name": "eventist",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Event emitter for modular designs",
   "main": "lib/eventist.js",
   "engines": {
@@ -11,8 +11,7 @@
     "url": "git://github.com/valango/eventist.git"
   },
   "scripts": {
-    "test": "./node_modules/.bin/karma start --direct --single-run --browsers PhantomJS",
-    "postinstall": "examples/init.sh"
+    "test": "./node_modules/.bin/karma start --direct --single-run --browsers PhantomJS"
   },
   "keywords": [
     "bus",

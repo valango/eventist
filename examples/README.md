@@ -2,7 +2,10 @@
 
 ## Node examples
 
-You'll need Node.js to run these. All \*.js files in 
+**NB:** To run the examples, you'll need [Node.js](https://nodejs.org/)
+to be installed globally!
+
+All \*.js files in 
 [examples/node](node/) directory are application main files.
 
 ### console

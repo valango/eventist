@@ -10,7 +10,7 @@
 'use strict';
 
 // Event bus is the only connection between functional modules.
-var bus = require('eventist')();
+var bus = require('../../lib/eventist')();
 var emit = bus.emit;
 var logging = true;
 var pendingInput = null;
