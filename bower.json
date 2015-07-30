@@ -1,6 +1,6 @@
 {
   "name": "eventist",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Event emitter for modular designs",
   "main": "lib/eventist.js",
   "repository": {
@@ -24,10 +24,10 @@
     "node"
   ],
   "ignore": [
-  "**/.*",
-  "[Gk]*.js",
-  "*.yml",
-  "package.json",
-  "tests"
+    "**/.*",
+    "[Gk]*.js",
+    "*.yml",
+    "package.json",
+    "tests"
   ]
 }
