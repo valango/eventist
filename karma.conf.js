@@ -66,8 +66,8 @@ module.exports = function (config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['Chrome'/*, 'Firefox'*/],
-    //browsers: ['PhantomJS'],
+    //browsers: ['Chrome'/*, 'Firefox'*/],
+    browsers: ['PhantomJS'],
 
     phantomjsLauncher: {
       // Have PhantomJS exit if a ResourceError is encountered (useful if karma exits without killing phantom)
@@ -83,6 +83,7 @@ module.exports = function (config) {
       {
         frameworks:       ['jasmine'],
         files:            [
+          'tests/polyfills.js',
           'lib/eventist.js',
           'tests/lib/*.js'
         ],

@@ -39,23 +39,7 @@
     };
     testTarget = global.Eventist;
   }
-  //console.log('**** ENV:', env);
 
-
-  /*
-   Polyfill for patching a PhantomJs issue #10522.
-   @see(https://github.com/ariya/phantomjs/issues/10522)
-   Thanks to: @andreaugusto / @creationix !
-   */
-
-  /* jshint freeze: false */
-  Function.prototype.bind = Function.prototype.bind || function (thisp) {
-      var fn = this;
-      return function () {
-        return fn.apply(thisp, arguments);
-      };
-    };
-  /* jshint freeze: true */
 
 // ****************************************************
 // Actual test code
@@ -114,6 +98,8 @@
     testOff();
     testSend();
     testHook();
+    testEmitReporter();
+    testSendReporter();
     testDepth();
     testInfo();
     testMulti();
@@ -167,11 +153,17 @@
           em.once(EV1);
         }).toThrowError(TypeError, /Eventist#once: /);
       });
-    it('hook() should throw TypeError when callback is not a function',
+    it('hook() should throw TypeError when hook callback is not a function',
       function () {
         expect(function () {
           em.hook('a');
         }).toThrowError(TypeError, /Eventist#hook: callback/);
+      });
+    it('hook() should throw TypeError when reporter callback is not a function',
+      function () {
+        expect(function () {
+          em.reporter('a');
+        }).toThrowError(TypeError, /Eventist#reporter: callback/);
       });
   }
 
@@ -219,7 +211,7 @@
     });
     it('should be able to modify everything', function () {
       em.on(EV1, listener).hook(function (args) {
-        if (args.length===0) {
+        if (args.length === 0) {
           args.push(EV1);
           args.push(22);
         }
@@ -231,6 +223,41 @@
       em.emit();
       expect(count).toBe(2);
       expect(event).toBe('testEv1-22');
+    });
+  }
+
+  function testEmitReporter() {
+    var res = [];
+    it('emit should set event type and count of invocations', function () {
+      em.once(EV1, listener).reporter(function (count, event) {
+        res.push(event);
+        res.push(count);
+      });
+      em.emit(EV1, 1);
+      em.emit(EV1, 1);
+      expect(res[0]).toBe(EV1);
+      expect(res[1]).toBe(1);
+      expect(res[2]).toBe(EV1);
+      expect(res[3]).toBe(0);
+    });
+  }
+
+  function testSendReporter() {
+    it('send should set event type and count of invocations = 1', function (done) {
+      em.once(EV1, listener).reporter(function (count, event) {
+        expect(event).toBe(EV1);
+        expect(count).toBe(1);
+        done();
+      });
+      em.send(EV1, 1);
+    });
+    it('send should set event type and count of invocations = 0', function (done) {
+      em.reporter(function (count, event) {
+        expect(event).toBe(EV1);
+        expect(count).toBe(0);
+        done();
+      });
+      em.send(EV1, 1);
     });
   }
 
