@@ -41,7 +41,7 @@ on handling the current event.
 * ***Returns:*** `undefined` or the value returned by any handler.
 
 ### send ( [callback ,] event {, arguments} )
-Put event into queue to be sent asynchronously. If *callback* is supplied,
+Put event into queue to be emitted asynchronously. If *callback* is supplied,
 then Eventist will invoke it with the following argument values:
 
 * `null` or the exception value if one was caught;
