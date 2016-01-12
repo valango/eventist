@@ -1,6 +1,6 @@
 {
   "name": "eventist",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "Event emitter for modular designs",
   "main": "lib/eventist.js",
   "repository": {
