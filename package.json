@@ -1,6 +1,6 @@
 {
   "name": "eventist",
-  "version": "0.5.2",
+  "version": "0.5.1",
   "description": "Event emitter for modular designs",
   "main": "lib/eventist.js",
   "engines": {
@@ -11,6 +11,9 @@
     "url": "git://github.com/valango/eventist.git"
   },
   "scripts": {
+    "preversion": "npm test",
+    "version": "gulp build && git add -A lib",
+    "postversion": "git push && git push --tags",
     "test": "./node_modules/.bin/karma start --direct --single-run --browsers PhantomJS"
   },
   "keywords": [

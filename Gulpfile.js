@@ -134,7 +134,7 @@ gulp.task('test', function () {
   return tester('tests/**/*Spec.js');
 });
 
-gulp.task('compress', function () {
+gulp.task('build', function () {
   // @link(https://github.com/sindresorhus/gulp-jasmine)
   // options: verbose:false, includeStackTrace:false, reporter: obj/array
   var rename = require('gulp-rename')
