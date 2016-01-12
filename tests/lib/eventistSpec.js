@@ -21,7 +21,7 @@
 // ****************************************************
 
   if ('function' === typeof define && define.amd) {
-    env = 'AMD';
+    env        = 'AMD';
     initialize = function (done) {
       require([TARGET], function (target) {
         testTarget = target;
@@ -29,12 +29,12 @@
       });
     };
   } else if ('object' === typeof module && module.exports) {
-    env = 'NODE';
+    env        = 'NODE';
     initialize = function () {
       testTarget = require('../../' + TARGET);
     };
   } else {
-    env = 'WIN';
+    env        = 'WIN';
     initialize = function () {
     };
     testTarget = global.Eventist;
@@ -49,7 +49,7 @@
 
   var em, ev, event, count, msg
     , noop = function () {
-      };
+  };
 
 // ****************************************************
 // Test descriptions.
@@ -200,7 +200,7 @@
   function testHook() {
     it('should be called even without handlers', function () {
       var was = false;
-      var h = function (args) {
+      var h   = function (args) {
         was = args[0];
       };
       expect(em.hook(h)).toBe(null);
@@ -229,22 +229,24 @@
   function testEmitReporter() {
     var res = [];
     it('emit should set event type and count of invocations', function () {
-      em.once(EV1, listener).reporter(function (count, event) {
+      em.once(EV1, listener).reporter(function (event, count, args) {
         res.push(event);
         res.push(count);
+        res.push(args);
       });
       em.emit(EV1, 1);
       em.emit(EV1, 1);
       expect(res[0]).toBe(EV1);
       expect(res[1]).toBe(1);
-      expect(res[2]).toBe(EV1);
-      expect(res[3]).toBe(0);
+      expect(res[2][0]).toBe(1);
+      expect(res[3]).toBe(EV1);
+      expect(res[4]).toBe(0);
     });
   }
 
   function testSendReporter() {
     it('send should set event type and count of invocations = 1', function (done) {
-      em.once(EV1, listener).reporter(function (count, event) {
+      em.once(EV1, listener).reporter(function (event, count) {
         expect(event).toBe(EV1);
         expect(count).toBe(1);
         done();
@@ -252,7 +254,7 @@
       em.send(EV1, 1);
     });
     it('send should set event type and count of invocations = 0', function (done) {
-      em.reporter(function (count, event) {
+      em.reporter(function (event, count) {
         expect(event).toBe(EV1);
         expect(count).toBe(0);
         done();
@@ -317,15 +319,14 @@
       // Catch what you can't... ;-)
       if (env === 'NODE') {
         process.once('uncaughtException', function (e) {
-          //console.log('CATCH-G:', e);
-          if ('string' === typeof e) {
-            expect(e.split(' ').pop()).toBe('intended');
-            //process.on('uncaughtException', void 0);
-            done();
-          }
+          // console.log('CATCH-G:', e, typeof e);
+          expect(e instanceof Error).toBe(true);
+          expect(e.message.split(' ').pop()).toBe('intended');
+          done();
         });
       } else {
         global.onerror = function (e) {
+          // console.log('CATCH-F:', e, typeof e);
           expect(e.split(' ').pop()).toBe('intended');
           done();
         };
