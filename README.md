@@ -96,7 +96,8 @@ with falsey argument will remove the hook callback.
 
 ### reporter ( [callback] )
 Sets a callback to be called in the end of every call of *emit()* or *send()*
-with arguments `count` and `event`, *count* being a number of handlers actually
+with arguments `event`, `count` and `args`, 
+*count* being a number of handlers actually
 executed on particular *event*. Otherwise, it is similar to *hook()* method.
 
 * ***callback*** function receiving *count* of handlers invoked and the *event*
