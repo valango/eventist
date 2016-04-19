@@ -53,22 +53,23 @@ If callback is not supplied, then exception from processing will not be caught.
 * ***callback*** is `function(*,*,Array<*>)` .
 * ***event*** string.
 * ***arguments*** are optional and can be of any type.
-* ***Returns:*** object instance for chaining.
+* ***Returns:*** instance of itself for chaining.
 * ***Throws:*** any exception from event processing if `callback` is missing.
 
-### on ( event, handler )
-Register a handler function for event. No checks for duplicates.
+### on ( event, handler[, instance] )
+Register a handler (function or method) for event. No checks for duplicates.
 
 * ***event*** string.
 * ***handler*** function that will be called with arguments supplied
 to *emit()*. See return value handling above.
-* ***Returns:*** object instance for chaining.
+* ***instance*** object instance.
+* ***Returns:*** instance of itself for chaining.
 * ***Throws:***  `TypeError` upon illegal argument type.
 
-### once ( event, handler )
+### once ( event, handler[, instance] )
 Same as *on()*, but the handler will be removed right after it gets called.
 
-### off ( event, handler )
+### off ( event, handler[, instance] )
 Remove previously registered handler for the `event`, if found.
 If duplicate registrations were made, only the last one will be undone.
 `TypeError` exception will be thrown if *event* is not a string. 
@@ -76,8 +77,17 @@ If duplicate registrations were made, only the last one will be undone.
 * ***event*** string.
 * ***handler*** function previously registered via *on()* or *once()*.
 ***or*** `true` to remove all handlers for given event.
-* ***Returns:*** object instance for chaining.
+* ***instance*** object instance.
+* ***Returns:*** instance of itself for chaining.
 * ***Throws:***  `TypeError` if *event* is not a string.
+
+### unplug ( instance )
+Remove handlers, which are methods of given *instance*, if found.
+
+* ***instance*** object instance.
+* ***Returns:*** instance of itself for chaining.
+* ***Throws:***  `TypeError` exception will be thrown if *instance*
+is not an object or is `null`
 
 ## Debugging API
 
