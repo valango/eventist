@@ -104,6 +104,7 @@
     testInfo();
     testMulti();
     testReturn();
+    testUnplug();
   }
 
 //  Check if the event data is preserved and increment the counter.
@@ -128,43 +129,62 @@
     (event = ev = void 0) || (count = 0) || (msg = '');
   }
 
+  function genCheck(method) {
+    return function checkFn() {
+      var rx = new RegExp('Eventist#' + method + ': ');
+      it('should throw TypeError when event type not string',
+        function () {
+          expect(function () {
+            em[method](this, listener);
+          }).toThrowError(TypeError, rx);
+        });
+      it('should throw TypeError when listener is not a function',
+        function () {
+          expect(function () {
+            em[method](EV1, this);
+          }).toThrowError(TypeError, rx);
+        });
+      it('should throw TypeError when instance is not an object',
+        function () {
+          expect(function () {
+            em[method](EV1, listener, 0);
+          }).toThrowError(TypeError, rx);
+          expect(function () {
+           em[method](EV1, listener, null);
+           }).toThrowError(TypeError, rx);
+        });
+    };
+  }
+
   function testChecks() {
-    it('on() should throw TypeError when event type not string',
-      function () {
-        expect(function () {
-          em.on(this, listener);
-        }).toThrowError(TypeError, /Eventist#on: /);
-      });
-    it('once() should throw TypeError when event type not string',
-      function () {
-        expect(function () {
-          em.once(this, listener);
-        }).toThrowError(TypeError, /Eventist#once: /);
-      });
-    it('on() should throw TypeError when listener is not a function',
-      function () {
-        expect(function () {
-          em.on(EV1, this);
-        }).toThrowError(TypeError, /Eventist#on: /);
-      });
-    it('once() should throw TypeError when listener is not a function',
-      function () {
-        expect(function () {
-          em.once(EV1);
-        }).toThrowError(TypeError, /Eventist#once: /);
-      });
-    it('hook() should throw TypeError when hook callback is not a function',
-      function () {
-        expect(function () {
-          em.hook('a');
-        }).toThrowError(TypeError, /Eventist#hook: callback/);
-      });
-    it('hook() should throw TypeError when reporter callback is not a function',
-      function () {
-        expect(function () {
-          em.reporter('a');
-        }).toThrowError(TypeError, /Eventist#reporter: callback/);
-      });
+    describe('#on()', genCheck('on'));
+    describe('#once()', genCheck('once'));
+    describe('#hook()', function chkHook() {
+      it('should throw TypeError when hook callback is not a function',
+        function () {
+          expect(function () {
+            em.hook('a');
+          }).toThrowError(TypeError, /Eventist#hook: callback/);
+        });
+      it('should throw TypeError when reporter callback is not a function',
+        function () {
+          expect(function () {
+            em.reporter('a');
+          }).toThrowError(TypeError, /Eventist#reporter: callback/);
+        });
+    });
+    describe('#unplug()', function chkUnplug() {
+      it('should throw TypeError when instance is not an object',
+        function () {
+          var rx = new RegExp('Eventist#unplug: ');
+          expect(function () {
+            em.unplug();
+          }).toThrowError(TypeError, rx);
+          expect(function () {
+            em.unplug(0);
+          }).toThrowError(TypeError, rx);
+        });
+    });
   }
 
   function testOn() {
@@ -186,10 +206,17 @@
   }
 
   function testOff() {
-    it('should discard handlers properly', function () {
+    it('should discard handler function', function () {
       em.on(EV1, listener).once(EV1, noop).off('NOPE', true);
       expect(Object.keys(em.info()).length).toBe(1);
       expect(Object.keys(em.off(EV1, true).info()).length).toBe(0);
+    });
+    it('should discard handler method', function () {
+      em.on(EV1, listener, this).once(EV1, noop).off('NOPE', true);
+      em.off(EV1, listener).off(EV1, noop);
+      expect(Object.keys(em.info()).length).toBe(1);
+      em.off(EV1, listener, this);
+      expect(Object.keys(em.info()).length).toBe(0);
     });
     it('should discard unfired once handler', function () {
       em.once(EV1, listener).off(EV1, listener);
@@ -272,6 +299,25 @@
       em.emit(ENO);
       expect(count).toBe(1);
       expect(msg).toBe('');
+    });
+  }
+
+  function testUnplug() {
+    it('should unplug', function () {
+      var a = 0, b = 0;
+
+      function ha() {
+        a += 1;
+      }
+
+      function hb() {
+        b += 1;
+      }
+
+      em.on(EV1, ha, this).on(EV1, hb, this).emit(EV1);
+      em.unplug(this).emit(EV1);
+      expect(a).toBe(1,'a');
+      expect(b).toBe(1,'b');
     });
   }
 
