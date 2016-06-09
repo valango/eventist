@@ -10,7 +10,7 @@
 
   'use strict';
 
-  /* jshint browser: true */
+  /* eslint no-extend-native:0 */
 
   if (navigator && navigator.userAgent.indexOf('PhantomJS/') >= 0) {
     /*
@@ -19,13 +19,11 @@
      Thanks to: @andreaugusto / @creationix !
      */
 
-    /* jshint freeze: false */
     Function.prototype.bind = Function.prototype.bind || function (thisp) {
         var fn = this;
         return function () {
           return fn.apply(thisp, arguments);
         };
       };
-    /* jshint freeze: true */
   }
 })();

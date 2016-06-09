@@ -1,0 +1,11 @@
+{
+  "env": {
+    "mocha": true,
+    "jasmine": true,
+    "node": true
+  },
+  "rules": {
+    "func-names": 0,
+    "space-before-function-paren": 0
+  }
+}

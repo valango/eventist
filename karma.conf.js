@@ -6,8 +6,8 @@
  * @author Villem Alango <villem.alango@gmail.com>
  */
 
-/* jshint node: true */
-module.exports = function (config) {
+/* global module, process */
+module.exports = function wrapper(config) {
 
   'use strict';
 
@@ -40,9 +40,9 @@ module.exports = function (config) {
     reporters: ['progress', 'coverage'],
 
     coverageReporter: {
-      /*instrumenterOptions: {
+      /* instrumenterOptions: {
        istanbul: { noCompact: true }
-       },*/
+       }, */
       dir:       'reports/coverage/browser-amd',
       reporters: [
         // Empty subdir forces each browser to create it's own.
@@ -66,8 +66,8 @@ module.exports = function (config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    //browsers: ['Chrome'/*, 'Firefox'*/],
-    browsers: ['PhantomJS'],
+    browsers: ['Chrome', 'Firefox'],
+    // browsers: ['PhantomJS'],
 
     phantomjsLauncher: {
       // Have PhantomJS exit if a ResourceError is encountered (useful if karma exits without killing phantom)
@@ -105,7 +105,7 @@ module.exports = function (config) {
   }
 
   if (override) {
-    /* jshint forin: false */
+    /* eslint guard-for-in:0 */
     for (key in override) {
       options[key] = override[key];
     }

@@ -4,52 +4,74 @@
  * @author Villem Alango <villem.alango@gmail.com>
  */
 
-/* jshint node: true */
+/* eslint no-console:0  */
+/* globals __dirname */
 
 'use strict';
 
-//  jshint options file name
-var HINTRC  = '.jshintrc'
-  , JSFILES = '**/*.js'
-  , RED     = '\u001B[31m'  // ANSI escape code
-  ;
-/* globals console: false  */
-var debug = console.log.bind(console, '#');
+var JS     = '*.js', S = '**';
+//  Directories we want to process ... eslint or otherwise
+var JSDIRS = ['lib', 'tests'];
+//  eslint rule file name
+var LRULES = '.eslintrc';
 
-var gulp = require('gulp')
-  , path = require('path')
-  ;
-var basePath   = __dirname
-  , ruleLength = HINTRC.length
-  , exclusions = ['!**/*.min.js', '!node_modules/**/*.js', '!reports/**/*.js',
-      '!examples/node/node_modules/**/*.js']
-  , testsDir   = basePath + '/tests/lib/'
-  , srcDir     = basePath + '/lib/'
+var lintOptions = {useEslintrc: true};
+
+var gulp    = require('gulp')
+  , path    = require('path')
+  , log     = console.log.bind(console, '#')
+  , runners = []
+  , sep     = path.sep
+  , homeDir = __dirname
+  , allJs   = [S, JS].join(sep)
   ;
 
-var only = function (p) {
-  var def = exclusions.slice();
-  def.unshift(p);
-  return def;
-};
+var linter;
 
-// JSHINT
-// @link(https://www.npmjs.com/package/gulp-jshint)
-// @link(http://jshint.com/docs/)
-// NB: unless `lookup` option is set to false,
-// linter will search for ".jshintrc" in the file's directory and then
-// climb upwards.
+var jsPaths = JSDIRS.map(function js(p) {
+  return [homeDir, p, allJs].join(sep);
+}).concat(homeDir + sep + JS);
 
-function hinter(fspec, opt_options) {
-  var jshint  = require('gulp-jshint')
-    , stylish = require('jshint-stylish')
-    ;
+function runLinter(fspec) {
   return gulp.src(fspec)
-    .pipe(jshint(opt_options))
-    .pipe(jshint.reporter(stylish));
+             .pipe(linter(lintOptions))
+             .pipe(linter.formatEach());
 }
 
-var tester = function (spec) {
+function watchSourcesFor(runner) {
+
+  if (runners.push(runner) === 1) {
+    //  Run gulp.watch only on the 1-st call.
+    gulp.watch(jsPaths, function b(ev) {
+      var fn, i;
+
+      if (ev.type !== 'deleted') {
+        log('changed:', ev.path); // Give user a hint we've reacted.
+
+        for (i = 0; (fn = runners[i]) !== undefined; i += 1) {
+          console.log(ev.path);
+          fn(ev.path);
+        }
+      }
+    });
+  }
+}
+
+function watchRulefiles(name, runner) {
+
+  var rulePaths = JSDIRS.map(function ru(p) {
+    return [homeDir, p, '**', name].join(sep);
+  }).concat([homeDir, name].join(sep));
+
+  gulp.watch(rulePaths, function d(ev) {
+    var p = ev.path;
+    p     = p.substr(0, p.length - name.length - 1);
+    log('changed:' + name, p);
+    runner(p === homeDir ? jsPaths : p + sep + allJs);
+  });
+}
+
+function tester(spec) {
   var GJC            = require('gulp-jsx-coverage')
     , jasmine        = require('gulp-jasmine')
     , GJCoptions     = {
@@ -65,86 +87,48 @@ var tester = function (spec) {
       }
     , jasmineOptions = {verbose: true, includeStackTrace: true}
     ;
-  GJC.initIstanbulHook(GJCoptions);
+
+  GJC.initModuleLoaderHack(GJCoptions);
 
   return gulp.src(spec)
-    .pipe(jasmine(jasmineOptions))
-    .on('end', GJC.colloectIstanbulCoverage(GJCoptions));
-};
-
-var watcher = function (hint, test) {
-  gulp.watch(only(JSFILES), function (ev) {
-    var p0, p;
-    if (ev.type !== 'deleted') {
-      p0 = ev.path;
-      if (test) {
-        if (p0.indexOf(srcDir) === 0) {
-          p = testsDir + path.basename(p0, '.js') + 'Spec.js';
-        } else if (p0.indexOf(testsDir) === 0) {
-          p = p0;
-        }
-        p && tester(p);
-      }
-      hint && hinter(p0);
-    }
-  });
-  // TODO solve the issue#1
-  test && debug(RED + 'NB: Use of Karma test runner is recommended, ' +
-    'see issue#1 at https://github.com/valango/eventist/ !');
-};
+             .pipe(jasmine(jasmineOptions))
+             .on('end', GJC.collectIstanbulCoverage(GJCoptions));
+}
 
 // ==================  Tasks  ===================
 
-/*
- Watch for source file changes.
- NB: this does not detect new file creation!
- */
-gulp.task('watch', function () {
-  watcher(true, true);
-});
+function runAndWatch(runner, rules) {
 
-gulp.task('watch-hint', function () {
-  watcher(true, false);
-});
-
-gulp.task('watch-test', function () {
-  watcher(false, true);
-});
-
-/*
- When .jshintrc file is changed, run jshint for affected directories.
- */
-gulp.task('hint-watch', function () {
-  gulp.watch('**/.jshintrc', function (ev) {
-    var p = ev.path;
-    p = p.substr(0, p.length - ruleLength) + JSFILES;
-    debug('hwatch:', p);
-    hinter(only(p));
+  jsPaths.forEach(function f(p) {
+    runner(p);
   });
-});
+  watchSourcesFor(runner);
+  watchRulefiles(rules, runner);
+}
 
 /*
- Run-once jshint task.
+ * Linter task.
  */
-gulp.task('hint', function () {
-  hinter(only('**/*.js'));
+gulp.task('lint', function e() {
+  linter = require('gulp-eslint');
+  runAndWatch(runLinter, LRULES);
 });
 
-gulp.task('test', function () {
+gulp.task('test', function t() {
   return tester('tests/**/*Spec.js');
 });
 
-gulp.task('build', function () {
+gulp.task('build', function t() {
   // @link(https://github.com/sindresorhus/gulp-jasmine)
   // options: verbose:false, includeStackTrace:false, reporter: obj/array
   var rename = require('gulp-rename')
     , uglify = require('gulp-uglify')
     ;
   return gulp.src('./lib/eventist.js')
-    .pipe(uglify({preserveComments: 'some'}))
-    .pipe(rename('eventist.min.js'))
-    .pipe(gulp.dest('./lib'));
+             .pipe(uglify({preserveComments: 'some'}))
+             .pipe(rename('eventist.min.js'))
+             .pipe(gulp.dest('./lib'));
 });
 
 // Define the default task as a sequence of the above tasks
-gulp.task('default', ['test', 'hint', 'watch-hint', 'hint-watch']);
+gulp.task('default', ['test', 'lint']);

@@ -10,17 +10,21 @@
 
   'use strict';
 
-  /* jshint node: true */
-
   var TARGET = 'lib/eventist';
 
   var initialize, testTarget, env = '?';
+
+  var EV1 = 'testEv1', ENO = 'testEvNope';
+
+  var em, ev, event, count, msg
+    , noop = function () {
+  };
 
 // ****************************************************
 // Set-up code for different environments.
 // ****************************************************
 
-  if ('function' === typeof define && define.amd) {
+  if (typeof define === 'function' && define.amd) {
     env        = 'AMD';
     initialize = function (done) {
       require([TARGET], function (target) {
@@ -28,28 +32,19 @@
         done();
       });
     };
-  } else if ('object' === typeof module && module.exports) {
+  }
+  else if (typeof module === 'object' && module.exports) {
     env        = 'NODE';
     initialize = function () {
       testTarget = require('../../' + TARGET);
     };
-  } else {
+  }
+  else {
     env        = 'WIN';
     initialize = function () {
     };
     testTarget = global.Eventist;
   }
-
-
-// ****************************************************
-// Actual test code
-// ****************************************************
-
-  var EV1 = 'testEv1', ENO = 'testEvNope';
-
-  var em, ev, event, count, msg
-    , noop = function () {
-  };
 
 // ****************************************************
 // Test descriptions.
@@ -150,8 +145,8 @@
             em[method](EV1, listener, 0);
           }).toThrowError(TypeError, rx);
           expect(function () {
-           em[method](EV1, listener, null);
-           }).toThrowError(TypeError, rx);
+            em[method](EV1, listener, null);
+          }).toThrowError(TypeError, rx);
         });
     };
   }
@@ -256,9 +251,9 @@
   function testEmitReporter() {
     var res = [];
     it('emit should set event type and count of invocations', function () {
-      em.once(EV1, listener).reporter(function (event, count, args) {
-        res.push(event);
-        res.push(count);
+      em.once(EV1, listener).reporter(function (evnt, cnt, args) {
+        res.push(evnt);
+        res.push(cnt);
         res.push(args);
       });
       em.emit(EV1, 1);
@@ -273,17 +268,17 @@
 
   function testSendReporter() {
     it('send should set event type and count of invocations = 1', function (done) {
-      em.once(EV1, listener).reporter(function (event, count) {
-        expect(event).toBe(EV1);
-        expect(count).toBe(1);
+      em.once(EV1, listener).reporter(function (evnt, cnt) {
+        expect(evnt).toBe(EV1);
+        expect(cnt).toBe(1);
         done();
       });
       em.send(EV1, 1);
     });
     it('send should set event type and count of invocations = 0', function (done) {
-      em.reporter(function (event, count) {
-        expect(event).toBe(EV1);
-        expect(count).toBe(0);
+      em.reporter(function (evnt, cnt) {
+        expect(evnt).toBe(EV1);
+        expect(cnt).toBe(0);
         done();
       });
       em.send(EV1, 1);
@@ -316,8 +311,8 @@
 
       em.on(EV1, ha, this).on(EV1, hb, this).emit(EV1);
       em.unplug(this).emit(EV1);
-      expect(a).toBe(1,'a');
-      expect(b).toBe(1,'b');
+      expect(a).toBe(1, 'a');
+      expect(b).toBe(1, 'b');
     });
   }
 
@@ -370,7 +365,8 @@
           expect(e.message.split(' ').pop()).toBe('intended');
           done();
         });
-      } else {
+      }
+      else {
         global.onerror = function (e) {
           // console.log('CATCH-F:', e, typeof e);
           expect(e.split(' ').pop()).toBe('intended');
@@ -378,6 +374,7 @@
         };
       }
       em.once(EV1, function () {
+        /* eslint no-throw-literal:0 */
         throw 'intended';
       }).send(EV1, 12);
     });

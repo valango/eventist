@@ -4,7 +4,6 @@
  *  @link(http://karma-runner.github.io/0.12/plus/requirejs.html)
  */
 
-/* jshint sub: true, strict: false */
 /* globals window: false, require: false */
 
 var allTestFiles = [];
@@ -17,11 +16,9 @@ var pathToModule = function (path) {
 };
 
 Object.keys(window.__karma__.files).forEach(function (file) {
-  var mod;
   if (file && TEST_REGEXP.test(file)) {
     // Normalize paths to RequireJS module names.
-    allTestFiles.push(mod = pathToModule(file));
-    //console.log(file, '->', mod);
+    allTestFiles.push(pathToModule(file));
   }
 });
 
