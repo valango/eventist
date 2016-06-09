@@ -11,6 +11,10 @@ Event emitter for modular designs.
 * support for application profiling and testing on both front- and back-end;
 * implement all this with minimum amount of code.
 
+**NB:** The release 1.0 conveniently supports using instance methods as event
+handlers. Enhanced API makes [preventing memory leaks](#prevent-leaks) much
+easier.
+
 ## Installation
 
 ```
@@ -28,7 +32,7 @@ Take a look at and play with [code samples](examples/README.md) and
 ## Main API
 
 ### emit ( event {, arguments} )
-Call the handlers registered for the *event*.
+Call *synchronously* the handlers registered for the *event*.
 When a handler returns anything else than `undefined`, *emit()* will return
 the same value immediately, perhaps leaving some handlers untouched.
 
@@ -41,7 +45,8 @@ on handling the current event.
 * ***Returns:*** `undefined` or the value returned by any handler.
 
 ### send ( [callback ,] event {, arguments} )
-Put event into queue to be emitted asynchronously. If *callback* is supplied,
+Put event into queue to be called *asynchronously* on the next timer tick.
+If *callback* is supplied,
 then Eventist will invoke it with the following argument values:
 
 * `null` or the exception value if one was caught;
@@ -81,13 +86,17 @@ If duplicate registrations were made, only the last one will be undone.
 * ***Returns:*** instance of itself for chaining.
 * ***Throws:***  `TypeError` if *event* is not a string.
 
+**NOTE:** The *instance* argument will be supplied to handler as
+[thisArg](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/apply),
+but it can be any value.
+
 ### unplug ( instance )
 Remove handlers, which are methods of given *instance*, if found.
 
 * ***instance*** object instance.
 * ***Returns:*** instance of itself for chaining.
 * ***Throws:***  `TypeError` exception will be thrown if *instance*
-is not an object or is `null`
+is not an object or is `null`.
 
 ## Debugging API
 
@@ -138,7 +147,15 @@ debugging/profiling purposes. This method should not be called directly.
 * ***event*** as supplied to *emit()*.
 * ***Returns:*** anything from *handler*.
 
-## Special Patterns
+## Patterns
+
+### <a name=prevent-leaks></a>Preventing memory leaks
+If code like `eventist.on(someEvent, objectsMethod, objectInstance)`
+is executed, then `eventist.unplug(objectInstance)` should be called before
+discarding the object instance. Failure to do so will result in memory leak.
+
+Before v1.0 the only way to use instance method as event handler was to use
+closures, which resulted in ugly code.
 
 ### Reporting unhandled events
 This feature comes handy for fishing out possible event name typo errors.
